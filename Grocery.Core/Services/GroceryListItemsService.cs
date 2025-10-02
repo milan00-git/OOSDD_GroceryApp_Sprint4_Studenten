@@ -49,9 +49,64 @@ namespace Grocery.Core.Services
             return _groceriesRepository.Update(item);
         }
 
-        public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)   //Methode uitwerken
+        public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)   
         {
-            throw new NotImplementedException();
+            // Alle grocery list items ophalen
+            List<GroceryListItem> groceryListItems = _groceriesRepository.GetAll();
+
+            // Dictionary gebruike om de kwantiteit per product bij te houden
+            Dictionary<int, int> productKwantiteit = new Dictionary<int, int>();
+
+            for (int i = 0; i < groceryListItems.Count; i++)
+            {
+                int productId = groceryListItems[i].ProductId;
+                int amount = groceryListItems[i].Amount;
+
+                if (productKwantiteit.ContainsKey(productId))
+                {
+                    productKwantiteit[productId] += amount;
+                }
+                else
+                {
+                    productKwantiteit[productId] = amount;
+                }
+            }
+
+            // Top 5 producten vinden bij kwantiteit
+            List<BestSellingProducts> BestVerkochteProducten = new List<BestSellingProducts>();
+            for (int j = 0; j < topX; j++)
+            {
+                // Startwaarde zetten, er zijn geen producten in de lijst 'bestVerkochteProducten'
+                int maxProductId = -1;
+                int maxAmount = -1;
+
+                // Product vinden met de max kwantiteit
+                foreach (var paar in productKwantiteit)
+                {
+                    if (paar.Value > maxAmount)
+                    {
+                        maxAmount = paar.Value;
+                        maxProductId = paar.Key;
+                    }
+                }
+
+                // Geen producten meer
+                if (maxProductId == -1) break;
+
+                // Product details ophalen
+                var product = _productRepository.Get(maxProductId);
+                if (product != null)
+                {
+                    // j + 1 is de ranking
+                    BestVerkochteProducten.Add(new BestSellingProducts(product.Id, product.Name, product.Stock, maxAmount, j + 1));
+                }
+
+                // Gevonden product verwijderen voor de volgende iteratie om de volgende beste te vinden
+                // (mocht er een nieuw product komen).
+                productKwantiteit.Remove(maxProductId);
+            }
+
+            return BestVerkochteProducten;
         }
 
         private void FillService(List<GroceryListItem> groceryListItems)
