@@ -15,6 +15,9 @@ namespace Grocery.Core.Data.Repositories
                 new Client(2, "H.H. Hermans", "user2@mail.com", "dOk+X+wt+MA9uIniRGKDFg==.QLvy72hdG8nWj1FyL75KoKeu4DUgu5B/HAHqTD2UFLU="),
                 new Client(3, "A.J. Kwak", "user3@mail.com", "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=")
             ];
+
+            var admin = clientList.FirstOrDefault(c => c.EmailAddress == "user3@mail.com");     // user3 meegeven in admin variabele
+            if (admin != null) admin.role = Role.Admin;     // user3 de admin role toewijzen
         }
 
         public Client? Get(string email)
