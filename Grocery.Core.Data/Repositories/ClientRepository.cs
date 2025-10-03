@@ -17,7 +17,7 @@ namespace Grocery.Core.Data.Repositories
             ];
 
             var admin = clientList.FirstOrDefault(c => c.EmailAddress == "user3@mail.com");     // user3 meegeven in admin variabele
-            if (admin != null) admin.role = Role.Admin;     // user3 de admin role toewijzen
+            if (admin != null) admin.role = Role.Admin;     // user3 de admin rol toewijzen
         }
 
         public Client? Get(string email)
